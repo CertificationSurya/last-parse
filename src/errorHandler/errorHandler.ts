@@ -33,7 +33,7 @@ export class RuntimeError {
 	}
 	noFileAccess() {
 		let errorType = lookUpError[this.errorObj.errType];
-		const [paintedErrType, painterErrMsg] = this.Paint1(Beautify.error,	errorType, this.errorObj.message, Properties.italic);
+		const [paintedErrType, painterErrMsg] = this.Paint1(Beautify.error,	errorType, this.errorObj.message, Properties.underline);
 		this.Format1(paintedErrType, painterErrMsg);
 	}
 
@@ -56,3 +56,21 @@ export class RuntimeError {
 	}
 }
 
+
+// Error Handler
+export const handleError = (errObj: any) => {
+	if (errObj.code === "ENOENT"){
+		console.log('d')
+		new RuntimeError("No Such File or directory", ErrorType.FileError, errObj, false).noFileAccess();
+	}
+	else if (errObj.code === "MODULE_NOT_FOUND") {
+		new RuntimeError(
+			"File does not exist!",
+			ErrorType.FileError,
+			errObj,
+			true,
+		).InvalidFile();
+	} else {
+		console.error("Error accessing file:", errObj);
+	}
+}

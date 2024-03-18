@@ -1,8 +1,8 @@
 // #!/usr/bin/env ts-node
 import {DetailsHolder} from "./detailsHolder/holdDetails";
 import {resolvePath} from "./pathHandler/handlePath";
-import {ErrorType} from "./errorHandler/errorTypes";
-import {RuntimeError} from "./errorHandler/errorHandler";
+import {handleError} from "./errorHandler/errorHandler";
+import {isDirectory, isSupported } from "./pathHandler/handleFileValidity";
 
 if (process.argv.length > 3) {
 	process.exit();
@@ -19,25 +19,37 @@ const stripDotInPath = (path: string) => {
 	return path;
 };
 
+
+
 (async () => {
-	// get files
+	// getting file successfully
 	try {
 		const completePath = process.cwd() + stripDotInPath(path);
-		const config = await import(completePath);
-		console.log(config);
-	} catch (errObj: any) {
-		// console.log(errObj.code);
-		if (errObj.code === "MODULE_NOT_FOUND") {
-			new RuntimeError(
-				"File does not exist!",
-				ErrorType.FileError,
-				errObj,
-				true,
-			).InvalidFile();
-		} else {
-			console.error("Error accessing file:", errObj);
-		}
+		const config: {files: string[]} = await import(completePath);
+
+		let validFiles: string[] = [];
+		let invalidFiles: string[] = [];
+
+		console.log(config.files)
+		
+		config.files.forEach(filePath => {
+			if (!isDirectory(filePath) && isSupported(filePath)){
+				validFiles.push(filePath);
+			}
+			else {
+				invalidFiles.push(filePath);
+			}
+		});
+		
+		console.log(validFiles)
+		console.log(invalidFiles)
+		// const a =isDirectory(config.files)
+		// console.log(isSupported(config.files))
 	}
-
-
+	// retrieving the file was unsuccessful
+	catch (errObj: any) {
+		handleError(errObj);
+	}
 })();
+
+

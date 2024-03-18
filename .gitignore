@@ -1,3 +1,5 @@
 node_modules
 /lib
 /coverage
+config.last.json
+test.html
