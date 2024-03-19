@@ -1,5 +1,5 @@
 import {Beautify, Gap, Properties} from "cli-beautifier";
-import {ErrorType, MyError} from "./errorTypes";
+import {ErrorType, FileInvalidityType, MyError, fileInvalidityObjType} from "./errorTypes";
 
 // types
 type lookUpErrorType = {
@@ -19,6 +19,7 @@ const lookUpError: lookUpErrorType = {
     1: "Output-Error:"
 };
 
+
 export class RuntimeError {
 	private errorObj: MyError;
 
@@ -36,6 +37,11 @@ export class RuntimeError {
 		const [paintedErrType, painterErrMsg] = this.Paint1(Beautify.error,	errorType, this.errorObj.message, Properties.underline);
 		this.Format1(paintedErrType, painterErrMsg);
 	}
+	invalidFileFormat() {
+		let errorType = lookUpError[this.errorObj.errType];
+		const [paintedErrType, painterErrMsg] = this.Paint1(Beautify.error,	errorType, this.errorObj.message, Properties.strikethrough);
+		this.Format1(paintedErrType, painterErrMsg);
+	}
 
 	// Painters
 	private Paint1(	Painter: PainterType, OperationType: string, Message: string, messageProperty: Property = Properties.none): [string, string] {
@@ -47,8 +53,8 @@ export class RuntimeError {
 	private Format1(OperationType: string, Message: string, display: boolean = true	): string {
 		const formattedOutput = `${OperationType} ${Message}`;
 		if (display) {
-            console.log(formattedOutput+'\n')
-            console.error(this.errorObj.nodeGenErrObj);
+            console.log(formattedOutput)
+            console.error(this.errorObj.nodeGenErrObj,'\n');
         };
 
         if (this.errorObj.exitable) process.exit(0);
@@ -73,4 +79,31 @@ export const handleError = (errObj: any) => {
 	} else {
 		console.error("Error accessing file:", errObj);
 	}
+}
+
+
+export const handleInvalidFileFormat = (invalidFiles: fileInvalidityObjType[]):void => {
+
+	invalidFiles.map((invalidFileObj) => {
+		switch(invalidFileObj.invalidityType){
+			case FileInvalidityType.DIRECTORY:
+				showInvalidFileFormatErr(invalidFileObj.filePath, ErrorType.FileError, "Directory only Provided without any file format to look for");
+				break;
+
+			case FileInvalidityType.SUPPORT:
+				showInvalidFileFormatErr(invalidFileObj.filePath, ErrorType.FileError, "Non-Supporting file format/error Format provided");
+				break;
+
+			case FileInvalidityType.NON_EXISTING:
+				showInvalidFileFormatErr(invalidFileObj.filePath, ErrorType.FileError, "File Doesn't Exist or can't be accessed");
+				break;
+
+			default:
+				break;
+		}
+	})
+}
+
+const showInvalidFileFormatErr = (filePath: string, errType: ErrorType, message: string, exitable: boolean = false) => {
+	new RuntimeError(filePath, errType, {message} as Error, exitable).invalidFileFormat();
 }

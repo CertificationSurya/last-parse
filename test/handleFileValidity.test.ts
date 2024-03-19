@@ -1,7 +1,7 @@
 import * as functionType from "../src/pathHandler/handleFileValidity";
 
 // extra fixture to support functionType
-const {isDirectory, isSupported} = jest.requireActual<typeof functionType>(
+const {isDirectory, isSupported, containsGlob} = jest.requireActual<typeof functionType>(
 	"../src/pathHandler/handleFileValidity.ts"
 );
 
@@ -43,4 +43,16 @@ describe("Test user given file name", () => {
 			expect(resultantValue).toBeFalsy();
 		});
 	});
+
+	describe("does path contains glob or not", ()=> {
+		it("should return true", ()=>{
+			expect(containsGlob("/src/*.html")).toBeTruthy();
+		})
+		it("should return false", ()=>{
+			expect(containsGlob("/src/index.html")).toBeFalsy();;
+		})
+		it("should return true", ()=>{
+			expect(containsGlob("/src/**/*.html")).toBeTruthy();
+		})
+	})
 });

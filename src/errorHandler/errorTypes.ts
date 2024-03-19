@@ -11,3 +11,11 @@ export interface MyError {
     errType: ErrorType;
     exitable?: boolean
 }
+
+// for fileValidities
+export enum FileInvalidityType { DIRECTORY, SUPPORT, NON_EXISTING};
+// file details type
+export type fileInvalidityObjType = {
+	filePath: string,
+	invalidityType: FileInvalidityType
+}
