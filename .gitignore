@@ -3,4 +3,3 @@ node_modules
 /coverage
 config.last.json
 test.html
-ty.ts
