@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { FileInvalidityType, fileInvalidityObjType } from "../errorHandler/errorTypes";
+import { recurseToFileMain } from "../../globImplementation"
 
 // import path from "path";
 
@@ -49,7 +50,7 @@ export const handleGlobFiles = (validFilePaths: string[], invalidFiles: fileInva
 
         // oopsi, we got files with glob
         else{
-            
+            recurseToFileMain(validFilePath);
         }
 	});
 

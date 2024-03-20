@@ -6,7 +6,6 @@ import {FileInvalidityType, fileInvalidityObjType} from './errorHandler/errorTyp
 import {isDirectory, isSupported, handleGlobFiles } from "./pathHandler/handleFileValidity";
 
 
-
 if (process.argv.length > 3) {
 	process.exit();
 }
@@ -54,8 +53,8 @@ const stripDotInPath = (path: string) => {
 		// Basically display my invalid File format
 		handleInvalidFileFormat(invalidFiles);
 
-		console.log(validFiles)
-		console.log(invalidFiles)
+		// console.log(validFiles)
+		// console.log(invalidFiles)
 	}
 	// retrieving the file was unsuccessful
 	catch (errObj: any) {
