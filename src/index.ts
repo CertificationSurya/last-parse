@@ -32,7 +32,7 @@ const stripDotInPath = (path: string) => {
 		let validFiles: string[] = [];
 		let invalidFiles: fileInvalidityObjType[] = [];
 
-		console.log(config.files)
+		// console.log(config.files)
 		
 		config.files.forEach(filePath => {
 			filePath = process.cwd() + stripDotInPath(filePath)
@@ -51,7 +51,7 @@ const stripDotInPath = (path: string) => {
 		// final check for the path. Checks if the path is accessible or not.
 		[validFiles, invalidFiles] = handleGlobFiles(validFiles, invalidFiles);
 		// Basically display my invalid File format
-		handleInvalidFileFormat(invalidFiles);
+		// handleInvalidFileFormat(invalidFiles);
 
 		// console.log(validFiles)
 		// console.log(invalidFiles)

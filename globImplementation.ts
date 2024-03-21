@@ -1,109 +1,52 @@
 import * as fs from 'fs'
-// let path = "../src/**/*.ts";
-const globRegex = /\/\*+(?!\.)/g; // for folder
-const fileGlobRegex = /^\/\*+/ // for file
-
-// tweaks
-// path = path.replace(globRegex, sepreator);
-// console.log(path)
-// let fragPath: string[]=[];
-
-const handleGlob = (path: string): string[] =>{
-    const sepreator = "|";
-    let fragPath: string[] = [];
-    let currStr = "";
-    for (let i=0; i<path.length; i++){
-        if (path[i]!== sepreator) currStr+=path[i];
-        else {
-            if (currStr){
-                fragPath.push(currStr);
-            } 
-            fragPath.push("");
-            currStr = "";
-        }
-    }
-    fragPath.push(currStr)
-    return fragPath;
-}
-
-// handleGlob(path);
-// console.log(fragPath)
-
-// // I am legend
-// const globRecurse: boolean[] = Array.from(fragPath, (str)=> !str);
-// console.log(globRecurse)
-// // tweaks end;
-// const targetFile = fragPath.pop()?.replace(fileGlobRegex, '');
-// const startFilePath = process.cwd()+ fragPath[0].replace(/\.+/,'');
-// console.log(startFilePath)
+const folderGlobRegex = /\*+(?!\.)/; // for folder
+const fileGlobRegex = /[/\*]+/ // for file
 
 // list of file at the end
 let files: string[] = [];
-let currPathLevel = 0;
 
-function recurseToFile (path: string, iterator: number, ending: string, globRecurse: boolean[]): void {
-    // console.log(path + "\n")
-    if (iterator > 2) {
-        iterator = 0;
-        currPathLevel--;
+function recurseToFile (currPath: string, fragPath: string[], currPathLevel: number, targetFile: string, endPathLevel: number): void {
+
+    // get allValidPath from the given path
+    const allValidFiles = fs.readdirSync(currPath);
+    // check path level
+    if (currPathLevel === endPathLevel+1){
+        currPathLevel --;
         return;
-    };
+    }
 
-    const availableFilesAndFolder:string[] = fs.readdirSync(path);
-    // console.log(availableFilesAndFolder)
+    allValidFiles.map(fNf => {
+        const tempPath = currPath + (currPath.endsWith("/")? fNf :`/${fNf}`);
+        if (fNf.endsWith(targetFile)) files.push(tempPath);
 
-    availableFilesAndFolder.map(fNf => {
-        fNf = path + (path.endsWith("/")? fNf : `/${fNf}`)
-        if (fs.statSync(fNf).isDirectory()){
-            if (globRecurse[++currPathLevel]){
-                recurseToFile(fNf, ++iterator, ending, globRecurse)
+        else if (folderGlobRegex.test(fragPath[currPathLevel])){
+            // console.log(tempPath)
+            if (fs.statSync(tempPath).isDirectory()){
+                recurseToFile(tempPath, fragPath, ++currPathLevel, targetFile, endPathLevel);
             }
+            
         }
-        else {
-            // console.log(fNf.endsWith(ending))
-            if (fNf.endsWith(ending)) files.push(fNf);
+        else if (fNf===fragPath[currPathLevel]){
+            recurseToFile(currPath+fragPath[currPathLevel], fragPath, ++currPathLevel, targetFile, endPathLevel);
         }
-    })    
+
+    })
 }
 
 
 export const recurseToFileMain = (path: string) :string[] => {
     let allValidFiles:string[] = [];
-    // add | in place of /*+
-    const sepreator = "|";
-    path = path.replace(globRegex, sepreator);
-    // console.log(path)
+    const rootPath = process.cwd()+'/';
 
-    let fragPath = handleGlob(path);
-    console.log(fragPath, "--")
-
+    const fragPath = path.replace(rootPath, "").split("/");
+    const targetFile = fragPath.pop()?.replace(fileGlobRegex, "")!;
+    // console.log(fragPath, targetFile)
     
-    const globRecurse: boolean[] = Array.from(fragPath, (str)=> !str);
-    // console.log(globRecurse, "--?")
-    const startFilePath = fragPath[0].replace(/\.+/,'');
-    const targetFile = fragPath.pop()?.replace(fileGlobRegex, '');
+    recurseToFile(rootPath, fragPath, 0, targetFile, fragPath.length+1)
 
-    console.log(startFilePath, currPathLevel, targetFile!, globRecurse)
+    console.log(path, files)
 
-    recurseToFile(startFilePath, currPathLevel, targetFile!, globRecurse)
 
-    console.log(files)
     return allValidFiles;
 
 }
-// recurseToFile( startFilePath, currPathLevel, targetFile!);
-
-// console.log(files)
-
-// dirs.map(dir=> {
-//     // dir+= "/"
-//     // console.log(dir)
-//     console.log(fs.readdirSync(dir).filter(fNf => {
-//         fNf = dir+'/'+ fNf;
-//         console.log(fNf)
-//         console.log(fs.statSync(fNf).isFile())
-//     }))
-//     // const file = fs.readdirSync(dir).filter(fNf => fs.statSync(fNf).isFile())
-//     // file.map(f => files.push(f))
-// })
-// console.log(dirs, files)
