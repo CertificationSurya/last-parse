@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { FileInvalidityType, fileInvalidityObjType } from "../errorHandler/errorTypes";
-import { recurseToFileMain } from "../../globImplementation"
+import { recurseToFileMain } from "./globImplementation"
 
 // import path from "path";
 
@@ -34,7 +34,7 @@ const isFileAccessible = (path: string): boolean => {
     }
 }
 
-export const handleGlobFiles = (validFilePaths: string[], invalidFiles: fileInvalidityObjType[]): [string[], fileInvalidityObjType[]] => {
+export const handleGlobFiles = (validFilePaths: string[], invalidFiles: fileInvalidityObjType[], ignoreFolders: string[]): [string[], fileInvalidityObjType[]] => {
 	let filteredValidFiles: string[] = [];
 
 	validFilePaths.map((validFilePath) => {
@@ -50,7 +50,10 @@ export const handleGlobFiles = (validFilePaths: string[], invalidFiles: fileInva
 
         // oopsi, we got files with glob
         else{
-            recurseToFileMain(validFilePath);
+            // get globed Files from each path and store in temporary address
+            const tempfilteredValidFiles = recurseToFileMain(validFilePath, ignoreFolders);
+            // loop over in that temporary address, check if we already have one, if no, then add to our file container
+            tempfilteredValidFiles.map(validFiles => !filteredValidFiles.includes(validFiles) && filteredValidFiles.push(validFiles))
         }
 	});
 
