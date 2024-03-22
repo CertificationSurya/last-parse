@@ -27,7 +27,7 @@ const stripDotInPath = (path: string) => {
 	// getting file successfully
 	try {
 		const completePath = process.cwd() + stripDotInPath(path);
-		const config: {files: string[]} = await import(completePath);
+		const config: {files: string[], ignoreFolders: string[]} = await import(completePath);
 
 		let validFiles: string[] = [];
 		let invalidFiles: fileInvalidityObjType[] = [];
@@ -49,12 +49,12 @@ const stripDotInPath = (path: string) => {
 		});
 
 		// final check for the path. Checks if the path is accessible or not.
-		[validFiles, invalidFiles] = handleGlobFiles(validFiles, invalidFiles);
+		[validFiles, invalidFiles] = handleGlobFiles(validFiles, invalidFiles, config.ignoreFolders);
 		// Basically display my invalid File format
-		// handleInvalidFileFormat(invalidFiles);
+		handleInvalidFileFormat(invalidFiles);
 
-		// console.log(validFiles)
-		// console.log(invalidFiles)
+		// console.log(validFiles, invalidFiles)
+
 	}
 	// retrieving the file was unsuccessful
 	catch (errObj: any) {
