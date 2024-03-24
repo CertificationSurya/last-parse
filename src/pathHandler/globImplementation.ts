@@ -38,7 +38,7 @@ function recurseToFile (currPath: string, fragPath: string[], currPathLevel: num
     // all Valid FilesAndFolder in a directory
     validFilesAndFolders.map(fNf => {
         // check if our file/folder is in ignoreList in config
-        if (listOfIgnoreFolders.includes(fNf)) return;
+        if (listOfIgnoreFolders?.includes(fNf)) return;
         // new variable to hold new Path so, we don't have to do hassel of poping last added path
         const tempPath = currPath + (currPath.endsWith("/")? fNf :`/${fNf}`); // path Creator
         
@@ -59,14 +59,12 @@ function recurseToFile (currPath: string, fragPath: string[], currPathLevel: num
         // if current file matches with targetFile && the path satisfies nestedDirectPath, then only insert path to files
         if (fNf.endsWith(targetFile) && satisfyNestedDirectPath( nestedDirectPaths, tempPath)) {
             files.push(tempPath);
-            // console.log(files)
-            // console.log(tempPath, nestedDirectPaths)
         }
     })
 }
 
 
-export const recurseToFileMain = (path: string, ignoreFolders: string[]) :string[] => {
+export const recurseToFileMain = (globPath: string[], ignoreFolders: string[]) :string[] => {
     // get ignoreFolders and enter into global Var because I don't wanna give additional unnecessary args while recurse
     listOfIgnoreFolders = ignoreFolders;
 
@@ -74,16 +72,16 @@ export const recurseToFileMain = (path: string, ignoreFolders: string[]) :string
     let allValidFiles:string[] = [];
     const rootPath = process.cwd()+'/'; // for first arg as currPath
 
-    const fragPath = path.replace(rootPath, "").split("/"); // remove rootPath and then split with /
-    const targetFile = fragPath.pop()?.replace(fileGlobRegex, "")!;  // get last fragPath and replace * if contains
-    const nestedDirectPaths = fragPath.filter(nestedPath => !folderGlobRegex.test(nestedPath)); // all path that doesn't have *+
-
-    recurseToFile(rootPath, fragPath, 0, targetFile, fragPath.length+1, nestedDirectPaths)
-    allValidFiles = files;
-    // console.log(path, allValidFiles)
-
-    // reset to defaults
-    files = [];
-    nestedDirectPathLv =0;
+    globPath.map(path => {
+        const fragPath = path.replace(rootPath, "").split("/"); // remove rootPath and then split with /
+        const targetFile = fragPath.pop()?.replace(fileGlobRegex, "")!;  // get last fragPath and replace * if contains
+        const nestedDirectPaths = fragPath.filter(nestedPath => !folderGlobRegex.test(nestedPath)); // all path that doesn't have /*+/
+        
+        recurseToFile(rootPath, fragPath, 0, targetFile, fragPath.length+1, nestedDirectPaths)
+        // in each recurseToFile, we'll add filePath in files and if we don't have already stored, we'll store
+        files.map(validFiles => !allValidFiles.includes(validFiles) && allValidFiles.push(validFiles))
+    })
+    // files = [];
+    // nestedDirectPathLv =0;
     return allValidFiles;
 }

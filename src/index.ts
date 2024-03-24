@@ -53,7 +53,7 @@ const stripDotInPath = (path: string) => {
 		// Basically display my invalid File format
 		handleInvalidFileFormat(invalidFiles);
 
-		// console.log(validFiles, invalidFiles)
+		console.log(validFiles, invalidFiles)
 
 	}
 	// retrieving the file was unsuccessful

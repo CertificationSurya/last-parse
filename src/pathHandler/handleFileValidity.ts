@@ -36,6 +36,7 @@ const isFileAccessible = (path: string): boolean => {
 
 export const handleGlobFiles = (validFilePaths: string[], invalidFiles: fileInvalidityObjType[], ignoreFolders: string[]): [string[], fileInvalidityObjType[]] => {
 	let filteredValidFiles: string[] = [];
+    let allGlobFiles: string[] = [];
 
 	validFilePaths.map((validFilePath) => {
         // if we don't have glob, check if file is present & accessible, yes? add to valid, no? push to invalid with errtype of non-existing
@@ -50,12 +51,13 @@ export const handleGlobFiles = (validFilePaths: string[], invalidFiles: fileInva
 
         // oopsi, we got files with glob
         else{
-            // get globed Files from each path and store in temporary address
-            const tempfilteredValidFiles = recurseToFileMain(validFilePath, ignoreFolders);
-            // loop over in that temporary address, check if we already have one, if no, then add to our file container
-            tempfilteredValidFiles.map(validFiles => !filteredValidFiles.includes(validFiles) && filteredValidFiles.push(validFiles))
+            allGlobFiles.push(validFilePath);
         }
 	});
+
+    // sends all possible globPaths and ignore folders and push to filteredValidFiles
+    const tempAllPossibleFiles = recurseToFileMain(allGlobFiles, ignoreFolders);
+    tempAllPossibleFiles.map(validPath => filteredValidFiles.push(validPath));
 
 	return [filteredValidFiles, invalidFiles];
 };
