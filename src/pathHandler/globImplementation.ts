@@ -81,7 +81,7 @@ export const recurseToFileMain = (globPath: string[], ignoreFolders: string[]) :
         // in each recurseToFile, we'll add filePath in files and if we don't have already stored, we'll store
         files.map(validFiles => !allValidFiles.includes(validFiles) && allValidFiles.push(validFiles))
     })
-    // files = [];
-    // nestedDirectPathLv =0;
+    files = [];
+    nestedDirectPathLv =0;
     return allValidFiles;
 }

@@ -51,6 +51,7 @@ export const handleGlobFiles = (validFilePaths: string[], invalidFiles: fileInva
 
         // oopsi, we got files with glob
         else{
+            console.log(validFilePath);
             allGlobFiles.push(validFilePath);
         }
 	});

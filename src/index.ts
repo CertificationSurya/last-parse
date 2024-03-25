@@ -51,9 +51,9 @@ const stripDotInPath = (path: string) => {
 		// final check for the path. Checks if the path is accessible or not.
 		[validFiles, invalidFiles] = handleGlobFiles(validFiles, invalidFiles, config.ignoreFolders);
 		// Basically display my invalid File format
-		handleInvalidFileFormat(invalidFiles);
+		// handleInvalidFileFormat(invalidFiles);
 
-		console.log(validFiles, invalidFiles)
+		// console.log(validFiles, invalidFiles)
 
 	}
 	// retrieving the file was unsuccessful

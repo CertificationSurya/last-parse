@@ -1,21 +1,44 @@
 import * as functionType from "../src/pathHandler/globImplementation";
 
-// extra fixture to support functionType
 const {recurseToFileMain} = jest.requireActual<typeof functionType>(
 	"../src/pathHandler/globImplementation.ts"
 );
 
 describe("Test user given file name", () => {
-	let resultantValue: string[];
-    let ignoreFolders = ["node_modules", "lib", "test", ".git"]
+	const ignoreFolders = ["node_modules", "lib", "test", ".git"];
 
-	describe("globImplemetation Check", () => {
-		// no real directory is provided
-		it("should return /.test.html", () => {
-			resultantValue = recurseToFileMain(["./*.html"], ignoreFolders);
-            // console.log(resultantValue)
-			// expect(resultantValue).toContain("/test.html");
-		});
-	
+	describe("globImplementation Check", () => {
+		const prependCwd = (inputPaths: string[], expectedFiles: string[]) => {
+			const rootPath = process.cwd();
+			inputPaths = inputPaths.map((paths) => rootPath + paths);
+			expectedFiles = expectedFiles.map((paths) => rootPath + paths);
+			return [inputPaths, expectedFiles];
+		};
+
+		test.each([
+			// add root Path to the input and expected files
+			prependCwd(
+				["/**/*.html"],
+				["/pathTest/layer-1.html", "/pathTest/layer-1A.html", "/test.html"]
+			),
+			prependCwd(["/*.html"], ["/test.html"]),
+			prependCwd(["/**/invalidFolder/*.html"], []),
+			prependCwd(
+				["/**/layer2/**/*.html"],
+				[
+					"/pathTest/layer2/layer-2.html",
+					"/pathTest/layer2/layer-2A.html",
+					"/pathTest/layer2/layer3/layer-3.html",
+					"/pathTest/layer2/layer3/layer-3A.html",
+				]
+			),
+		])(
+			"should return matching HTML files for path: %s",
+			(inputPaths, expectedFiles) => {
+				expect(recurseToFileMain(inputPaths, ignoreFolders)).toEqual(
+					expectedFiles
+				);
+			}
+		);
 	});
 });
