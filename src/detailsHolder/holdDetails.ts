@@ -1,13 +1,17 @@
+import { configType } from "../configTypeAndDefaults";
+
 export class DetailsHolder {
 	private filePath: string;
 	private fileName: string;
     private line:number;
+    private userConfig: configType;
 
-	constructor(fullFilePath: string) {
+	constructor(fullFilePath: string, config: configType) {
         const fullpath: string[] = fullFilePath.split("/");
         [this.fileName, this.filePath] = [fullpath.pop()!, fullpath.join('/')+'/'];
         this.line=0;
+        this.userConfig = config;
 
-        // console.log(this.fileName, this.filePath)
+        // console.log(this.fileName, this.filePath, this.userConfig)
 	}
 }

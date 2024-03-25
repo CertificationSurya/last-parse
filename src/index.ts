@@ -4,6 +4,7 @@ import {resolvePath} from "./pathHandler/handlePath";
 import {handleError, handleInvalidFileFormat} from "./errorHandler/errorHandler";
 import {FileInvalidityType, fileInvalidityObjType} from './errorHandler/errorTypes'
 import {isDirectory, isSupported, handleGlobFiles } from "./pathHandler/handleFileValidity";
+import { configType, defaultConfigs } from "./configTypeAndDefaults";
 
 
 if (process.argv.length > 3) {
@@ -11,7 +12,7 @@ if (process.argv.length > 3) {
 }
 
 const path = resolvePath(process.argv[2]);
-const details = new DetailsHolder(path); // TODO-other implementation
+let details: DetailsHolder; // TODO-other implementation
 
 // strip Dot in path
 const stripDotInPath = (path: string) => {
@@ -27,7 +28,15 @@ const stripDotInPath = (path: string) => {
 	// getting file successfully
 	try {
 		const completePath = process.cwd() + stripDotInPath(path);
-		const config: {files: string[], ignoreFolders: string[]} = await import(completePath);
+		const userConfig: configType= await import(completePath);
+		// including others default config files if not given
+		const config: configType = {
+			...defaultConfigs,
+			...userConfig
+		}
+
+		// details holder to handle future parsing and whatnot
+		details = new DetailsHolder(path, config);
 
 		let validFiles: string[] = [];
 		let invalidFiles: fileInvalidityObjType[] = [];
@@ -53,7 +62,7 @@ const stripDotInPath = (path: string) => {
 		// Basically display my invalid File format
 		// handleInvalidFileFormat(invalidFiles);
 
-		// console.log(validFiles, invalidFiles)
+		console.log(validFiles, invalidFiles)
 
 	}
 	// retrieving the file was unsuccessful
