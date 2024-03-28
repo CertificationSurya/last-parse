@@ -20,6 +20,7 @@
 		"typescript": "^5.4.2"
 	},
 	"dependencies": {
-		"cli-beautifier": "^1.0.4"
+		"cli-beautifier": "^1.0.4",
+		"languagetool-api": "^1.1.2"
 	}
 }

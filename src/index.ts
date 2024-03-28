@@ -64,6 +64,10 @@ const stripDotInPath = (path: string) => {
 
 		console.log(validFiles, invalidFiles)
 
+		validFiles.map(async(files) => {
+
+		})
+
 	}
 	// retrieving the file was unsuccessful
 	catch (errObj: any) {
