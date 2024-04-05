@@ -5,6 +5,7 @@ import {handleError, handleInvalidFileFormat} from "./errorHandler/errorHandler"
 import {FileInvalidityType, fileInvalidityObjType} from './errorHandler/errorTypes'
 import {isDirectory, isSupported, handleGlobFiles } from "./pathHandler/handleFileValidity";
 import { configType, defaultConfigs } from "./configTypeAndDefaults";
+import { updateFile } from "./fileUpdater/updateFile";
 
 
 if (process.argv.length > 3) {
@@ -65,7 +66,8 @@ const stripDotInPath = (path: string) => {
 		console.log(validFiles, invalidFiles)
 
 		validFiles.map(async(files) => {
-
+			// console.log(files)
+			updateFile(files, details)
 		})
 
 	}

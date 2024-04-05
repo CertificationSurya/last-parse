@@ -4,7 +4,7 @@ export class DetailsHolder {
 	private filePath: string;
 	private fileName: string;
     private line:number;
-    private userConfig: configType;
+    public userConfig: configType;
 
 	constructor(fullFilePath: string, config: configType) {
         const fullpath: string[] = fullFilePath.split("/");

@@ -20,7 +20,7 @@
 		"typescript": "^5.4.2"
 	},
 	"dependencies": {
-		"cli-beautifier": "^1.0.4",
-		"languagetool-api": "^1.1.2"
+		"@inquirer/confirm": "^3.1.2",
+		"cli-beautifier": "^1.0.4"
 	}
 }
