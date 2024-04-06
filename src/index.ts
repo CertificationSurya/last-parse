@@ -67,7 +67,7 @@ const stripDotInPath = (path: string) => {
 
 		validFiles.map(async(files) => {
 			// console.log(files)
-			updateFile(files, details)
+			updateFile(files, details.userConfig)
 		})
 
 	}

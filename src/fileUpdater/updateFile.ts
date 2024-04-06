@@ -1,10 +1,10 @@
 import * as fs from "fs";
-import * as readline from "node:readline";
 import {SentenceDetails} from "../../src/detailsHolder/sentenceDetails";
-import {DetailsHolder} from "../detailsHolder/holdDetails";
-import confirm from "@inquirer/confirm"
+import confirm from "@inquirer/confirm";
+import {handleCorrection} from "./correctionHandler";
+import {configType} from "../configTypeAndDefaults";
 
-async function updateFile(fileName: string, details: DetailsHolder) {
+export async function updateFile(fileName: string, userConfig: configType) {
 	const chunkSentence: SentenceDetails[] = [];
 	const fileContent: string[] = [];
 
@@ -58,25 +58,32 @@ async function updateFile(fileName: string, details: DetailsHolder) {
 		}
 	}
 
-	chunkSentence.forEach(async (sentence) => {
+	for (const sentence of chunkSentence) {
 		// TODO: Checking of each sentence and words and provide feedback accordingly
-		const replacer = "I am the replacer";
-		const canReplace = true;
-		// if (!details.userConfig.autoReplace){
-		// 	// asks user to can i replace.
-		// }
+		const replacer: string = await handleCorrection(
+			sentence.content,
+			userConfig.languageConfig
+		);
 
-		if (canReplace) {
+		console.log(sentence.content + "  =>  " + replacer);
+		if (!userConfig.autoReplace) {
+			// asks user to can i replace.
+			const canReplace: boolean = await confirm({
+				message: "Contradict the sentence? ",
+			});
+
+			if (canReplace) {
+				fileContent[sentence.lineNum - 1] = fileContent[
+					sentence.lineNum - 1
+				].replace(sentence.content, replacer);
+			}
+			console.clear();
+		} else {
 			fileContent[sentence.lineNum - 1] = fileContent[
 				sentence.lineNum - 1
 			].replace(sentence.content, replacer);
 		}
-		// console.log(sentence)
-		// console.log(sentence.content)
-		// console.log(fileContent[sentence.lineNum-1].replace(sentence.content, replacer))
-	});
-
-	// console.log(fileContent)
+	}
 
 	fs.writeFile(fileName, fileContent.join("\n"), (err) => {
 		if (err) {
@@ -85,6 +92,4 @@ async function updateFile(fileName: string, details: DetailsHolder) {
 	});
 }
 
-export {updateFile};
-
-updateFile(process.cwd() + "/test.html", {} as DetailsHolder);
+// updateFile(process.cwd() + "/test.html", {} as DetailsHolder);
