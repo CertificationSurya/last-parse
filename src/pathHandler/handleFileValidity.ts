@@ -4,7 +4,7 @@ import { recurseToFileMain } from "./globImplementation"
 
 // import path from "path";
 
-const supportedFiles = [".html", ".jsx", ".tsx"];
+const supportedFiles = [".html", ".jsx", ".tsx", "*.ejs"];
 // const userPath = "./src/index.ts";
 
 export const isDirectory = (path: string): boolean => {

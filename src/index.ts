@@ -5,7 +5,8 @@ import {handleError, handleInvalidFileFormat} from "./errorHandler/errorHandler"
 import {FileInvalidityType, fileInvalidityObjType} from './errorHandler/errorTypes'
 import {isDirectory, isSupported, handleGlobFiles } from "./pathHandler/handleFileValidity";
 import { configType, defaultConfigs } from "./configTypeAndDefaults";
-import { updateFile } from "./fileUpdater/updateFile";
+import {  updateFile } from "./fileUpdater/updateFile";
+import { Beautify, Gap, Properties } from "cli-beautifier";
 
 
 if (process.argv.length > 3) {
@@ -15,6 +16,7 @@ if (process.argv.length > 3) {
 const path = resolvePath(process.argv[2]);
 let details: DetailsHolder; // TODO-other implementation
 
+// Helpers
 // strip Dot in path
 const stripDotInPath = (path: string) => {
 	if (path.startsWith(".")) {
@@ -22,9 +24,12 @@ const stripDotInPath = (path: string) => {
 	}
 	return path;
 };
+const paintFileName = (filePath: string): string => {
+	return Beautify.pass("\nGoing Through: ", false, 1) + Beautify.pass(filePath, true, Gap.Tab, Properties.bold)
+}
 
 
-
+// Implementation
 (async () => {
 	// getting file successfully
 	try {
@@ -41,8 +46,6 @@ const stripDotInPath = (path: string) => {
 
 		let validFiles: string[] = [];
 		let invalidFiles: fileInvalidityObjType[] = [];
-
-		// console.log(config.files)
 		
 		config.files.forEach(filePath => {
 			filePath = process.cwd() + stripDotInPath(filePath)
@@ -61,20 +64,16 @@ const stripDotInPath = (path: string) => {
 		// final check for the path. Checks if the path is accessible or not.
 		[validFiles, invalidFiles] = handleGlobFiles(validFiles, invalidFiles, config.ignoreFolders);
 		// Basically display my invalid File format
-		// handleInvalidFileFormat(invalidFiles);
+		handleInvalidFileFormat(invalidFiles);
+		console.clear();
 
-		console.log(validFiles, invalidFiles)
-
-		validFiles.map(async(files) => {
-			// console.log(files)
-			updateFile(files, details.userConfig)
-		})
-
+		for (const file of validFiles){
+			console.log(paintFileName(file.replace(process.cwd(), ".")))
+			await updateFile(file, details.userConfig)
+		}
 	}
 	// retrieving the file was unsuccessful
 	catch (errObj: any) {
 		handleError(errObj);
 	}
 })();
-
-

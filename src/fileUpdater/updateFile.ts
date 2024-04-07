@@ -1,33 +1,58 @@
 import * as fs from "fs";
-import {SentenceDetails} from "../../src/detailsHolder/sentenceDetails";
+import {SentenceDetails} from "../detailsHolder/sentenceDetails";
 import confirm from "@inquirer/confirm";
-import {handleCorrection} from "./correctionHandler";
+import {correctorRetType, handleCorrection} from "./correctionHandler";
 import {configType} from "../configTypeAndDefaults";
+import {SentencePainter} from "../errorHandler/errorHandler";
+
+const comments = [
+	{ext: ".html", cmtSt: "<!--", cmtEnd: "-->"},
+	{ext: ".ejs", cmtSt: "<!--", cmtEnd: "-->"},
+];
+
+const testComment = (line: string[], stOrEnd: string, currPos: number) => {
+	let chunk = "";
+	for (let i = 0; i < stOrEnd.length; i++) {
+		chunk += line[currPos + i];
+	}
+	return chunk === stOrEnd;
+};
 
 export async function updateFile(fileName: string, userConfig: configType) {
 	const chunkSentence: SentenceDetails[] = [];
 	const fileContent: string[] = [];
 
+	const fileCmt = comments.find((cmtDet) => fileName.endsWith(cmtDet.ext))!;
+	const {cmtSt, cmtEnd} = fileCmt;
+
 	const fileDatas = fs.readFileSync(fileName).toString().split("\n");
 
-	let inBrackets = false;
+	let inBrackets, skip = false;
 	let storeStartPos = true;
 	let contentStPos = -1;
 	let contentEndPos = -1;
 	let lineNum = 0;
 
 	for await (const line of fileDatas) {
+		let textContent = "";
 		lineNum++;
 		const currLine = line.split("");
-		let textContent = "";
 		fileContent.push(line);
 
 		for (let currPos = 0; currPos < currLine.length; currPos++) {
 			const char = currLine[currPos];
 
+			// comment checker
+			skip = !skip
+				? testComment(currLine, cmtSt, currPos)
+				: !testComment(currLine, cmtEnd, currPos);
+			if (skip) continue;
+
+			// brackets checker
 			if (char === "<") {
 				inBrackets = true;
 				contentEndPos = currPos - 1;
+
 				if (textContent) {
 					chunkSentence.push(
 						new SentenceDetails(
@@ -55,17 +80,38 @@ export async function updateFile(fileName: string, userConfig: configType) {
 					textContent += char;
 				} else textContent += /\s/.test(char) ? "" : char;
 			}
+
+			// if end of line and contains text, remove
+			if (!currLine[currPos + 1] && textContent) {
+				chunkSentence.push(
+					new SentenceDetails(textContent.replace("\r",''), contentStPos, currPos, lineNum)
+				);
+			}
 		}
 	}
 
+
 	for (const sentence of chunkSentence) {
-		// TODO: Checking of each sentence and words and provide feedback accordingly
-		const replacer: string = await handleCorrection(
-			sentence.content,
-			userConfig.languageConfig
+		let replacer: correctorRetType = {text: sentence.content};
+		let prevReplacer: string = sentence.content;
+
+		do {
+			prevReplacer = replacer.text;
+			// Checking of each sentence and words and provide feedback accordingly
+			replacer = await handleCorrection(
+				replacer.text,
+				userConfig.languageConfig
+			);
+		} while (replacer.text !== prevReplacer);
+		// noErr Continue
+		if (sentence.content === replacer.text) continue;
+		// Error?
+		console.log(
+			SentencePainter.redSquiggleText(sentence.content) +
+				"  =>  " +
+				SentencePainter.greenSquiggleText(replacer.text)
 		);
 
-		console.log(sentence.content + "  =>  " + replacer);
 		if (!userConfig.autoReplace) {
 			// asks user to can i replace.
 			const canReplace: boolean = await confirm({
@@ -75,13 +121,13 @@ export async function updateFile(fileName: string, userConfig: configType) {
 			if (canReplace) {
 				fileContent[sentence.lineNum - 1] = fileContent[
 					sentence.lineNum - 1
-				].replace(sentence.content, replacer);
+				].replace(sentence.content, replacer.text);
 			}
 			console.clear();
 		} else {
 			fileContent[sentence.lineNum - 1] = fileContent[
 				sentence.lineNum - 1
-			].replace(sentence.content, replacer);
+			].replace(sentence.content, replacer.text);
 		}
 	}
 
@@ -91,5 +137,3 @@ export async function updateFile(fileName: string, userConfig: configType) {
 		}
 	});
 }
-
-// updateFile(process.cwd() + "/test.html", {} as DetailsHolder);
