@@ -1,16 +1,26 @@
 {
-	"name": "last-parser",
+	"name": "last-parse",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.ts",
+	"description": "A npm package for handeling your linguistic error and suggest/performs correction. Currently Supporting HTML, EJS, txt files",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
 	"scripts": {
 		"compile": "tsc",
 		"start": "ts-node src/index.ts",
-		"test": "jest"
+		"test": "jest",
+		"build": "tsup"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"keywords": [
+		"parser",
+		"last-parser",
+		"html-autocorrect",
+		"text",
+		"grammar-autocorrect",
+		"final-parse"
+	],
+	"author": "CertificationSurya",
+	"license": "MIT",
 	"devDependencies": {
 		"@types/jest": "^29.5.12",
 		"@types/node": "^20.11.28",
@@ -21,6 +31,10 @@
 	},
 	"dependencies": {
 		"@inquirer/confirm": "^3.1.2",
-		"cli-beautifier": "^1.0.4"
-	}
+		"cli-beautifier": "^1.0.4",
+		"tsup": "^8.0.2"
+	},
+	"files": [
+		"/dist/*"
+	]
 }

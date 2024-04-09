@@ -8,6 +8,8 @@ import {SentencePainter} from "../errorHandler/errorHandler";
 const comments = [
 	{ext: ".html", cmtSt: "<!--", cmtEnd: "-->"},
 	{ext: ".ejs", cmtSt: "<!--", cmtEnd: "-->"},
+	// {ext: ".jsx", cmtSt: "{/*", cmtEnd: "*/}"},
+	// {ext: ".tsx", cmtSt: "{/*", cmtEnd: "*/}"},
 ];
 
 const testComment = (line: string[], stOrEnd: string, currPos: number) => {
@@ -21,13 +23,15 @@ const testComment = (line: string[], stOrEnd: string, currPos: number) => {
 export async function updateFile(fileName: string, userConfig: configType) {
 	const chunkSentence: SentenceDetails[] = [];
 	const fileContent: string[] = [];
+	let prevAngleBracket: '<'| null = null;
 
-	const fileCmt = comments.find((cmtDet) => fileName.endsWith(cmtDet.ext))!;
+	const fileCmt = comments.find((cmtDet) => fileName.endsWith(cmtDet.ext)) || { cmtSt: '', cmtEnd: ''};
 	const {cmtSt, cmtEnd} = fileCmt;
 
 	const fileDatas = fs.readFileSync(fileName).toString().split("\n");
 
-	let inBrackets, skip = false;
+	let inBrackets= true;
+	let skip = false;
 	let storeStartPos = true;
 	let contentStPos = -1;
 	let contentEndPos = -1;
@@ -50,6 +54,7 @@ export async function updateFile(fileName: string, userConfig: configType) {
 
 			// brackets checker
 			if (char === "<") {
+				prevAngleBracket = char;
 				inBrackets = true;
 				contentEndPos = currPos - 1;
 
@@ -65,6 +70,8 @@ export async function updateFile(fileName: string, userConfig: configType) {
 					textContent = "";
 				}
 			} else if (char === ">") {
+				if (prevAngleBracket!=='<') continue;
+				prevAngleBracket = null;
 				inBrackets = false;
 				storeStartPos = true;
 				continue;
@@ -90,6 +97,7 @@ export async function updateFile(fileName: string, userConfig: configType) {
 		}
 	}
 
+	// console.log(chunkSentence)
 
 	for (const sentence of chunkSentence) {
 		let replacer: correctorRetType = {text: sentence.content};

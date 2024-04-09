@@ -3,9 +3,7 @@ export type Language = "ar"|"ast-ES"|"be-BY"|"br-FR"|"ca-ES"|"ca-ES-valencia"|"c
 export interface configType {
 	files: string[];
 	ignoreFolders: string[];
-	showUpdate: boolean;
 	autoReplace: boolean;
-	api_key: string;
 	languageConfig: Language;
 }
 
@@ -13,7 +11,5 @@ export const defaultConfigs: configType = {
 	files: [""],
 	ignoreFolders: ["node_modules", ".git", "lib", "test"],
 	autoReplace: false,
-	api_key: "",
-	showUpdate: true,
 	languageConfig: "en-US",
 };

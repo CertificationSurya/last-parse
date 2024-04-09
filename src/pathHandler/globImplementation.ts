@@ -4,7 +4,6 @@ const fileGlobRegex = /[/\*]+/ // for file
 
 // list of file at the end
 let files: string[] = [];
-let listOfIgnoreFolders: string[] = [];
 let nestedDirectPathLv = 0; // for nestedDirectPath like /src and /test in /**/**/src/**/test/**
 
 const satisfyNestedDirectPath = (nestedDirectPaths: string[], path: string) => {
@@ -37,8 +36,6 @@ function recurseToFile (currPath: string, fragPath: string[], currPathLevel: num
 
     // all Valid FilesAndFolder in a directory
     validFilesAndFolders.map(fNf => {
-        // check if our file/folder is in ignoreList in config
-        if (listOfIgnoreFolders?.includes(fNf)) return;
         // new variable to hold new Path so, we don't have to do hassel of poping last added path
         const tempPath = currPath + (currPath.endsWith("/")? fNf :`/${fNf}`); // path Creator
         
@@ -64,19 +61,17 @@ function recurseToFile (currPath: string, fragPath: string[], currPathLevel: num
 }
 
 
-export const recurseToFileMain = (globPath: string[], ignoreFolders: string[]) :string[] => {
-    // get ignoreFolders and enter into global Var because I don't wanna give additional unnecessary args while recurse
-    listOfIgnoreFolders = ignoreFolders;
+export const recurseToFileMain = (globPath: string[]) :string[] => {
 
     // allValidFiles for as name suggest
     let allValidFiles:string[] = [];
     const rootPath = process.cwd()+'/'; // for first arg as currPath
 
-    globPath.map(path => {
+    globPath.map((path) => {
         const fragPath = path.replace(rootPath, "").split("/"); // remove rootPath and then split with /
         const targetFile = fragPath.pop()?.replace(fileGlobRegex, "")!;  // get last fragPath and replace * if contains
         const nestedDirectPaths = fragPath.filter(nestedPath => !folderGlobRegex.test(nestedPath)); // all path that doesn't have /*+/
-        
+
         recurseToFile(rootPath, fragPath, 0, targetFile, fragPath.length+1, nestedDirectPaths)
         // in each recurseToFile, we'll add filePath in files and if we don't have already stored, we'll store
         files.map(validFiles => !allValidFiles.includes(validFiles) && allValidFiles.push(validFiles))

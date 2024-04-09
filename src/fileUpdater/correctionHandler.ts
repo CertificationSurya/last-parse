@@ -36,7 +36,7 @@ async function corrector(params: params) {
 
 	try {
 		const res = await fetch(url, options);
-		const data = await res.json(); // Assuming the response is JSON
+		const data = await res.json(); 
 		return data;
 	} catch (error) {
 		console.error("Error:", error);
@@ -55,7 +55,6 @@ export const handleCorrection = async (
 
 	for (const match of res.matches) {
         const [stIdx, endIndex, replacement] = [match.offset+shiftAfterUpdate, match.offset+match.length + shiftAfterUpdate, match.replacements[0]?.value||""];
-
         if (replacement){
             text = replaceText(text, stIdx, endIndex, replacement);
         }

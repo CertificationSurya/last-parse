@@ -1,5 +1,6 @@
 {
-    "files": ["/*.html", "/*.ejs"],
-    "ignoreFolders": [],
-    "autoReplace": true
+    "files": ["/pathTest/*.html", "/da", "/**/*.html", "/pathTest/*.ejs", "/pathTest/*.jsx"],
+    "ignoreFolders": ["./node_modules", "/pathTest/test.ejs"],
+    "autoReplace": true,
+    "showUpdate": true
 }

@@ -1,0 +1,8 @@
+node_modules
+/src
+/coverage
+config.last.json
+jest.config.ts
+tsconfig.json
+tsup.config.ts
+/test

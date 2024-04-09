@@ -2,12 +2,18 @@
     "compilerOptions": {
         "target": "ES2017", // build project compiles to es2017 syntax
         "module": "CommonJS", // babbel, webpack has transpiler to work with commojs
-        "declaration": true, // type defination are automatically placed into a particular file while building
-        "outDir": "./lib", // lib folder will be created where compiled file are placed. 
-        "strict": true,
+        "outDir": "./dist", // lib folder will be created where compiled file are placed. 
         "types": ["node", "jest"],
+        "moduleResolution": "Node10",
+        "declaration": true, // type defination are automatically placed into a particular file while building
+        "strict": true,
         "resolveJsonModule": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "removeComments": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "isolatedModules": true,
+        "noEmit": true
     },
     "include": ["src"], // compile our ts code present in /src
     "exclude": ["node_modules", "**/tests/*"], // usual convention to test the lib is present in **/

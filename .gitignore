@@ -1,5 +1,5 @@
 node_modules
-/lib
+/dist
 /coverage
 config.last.json
 # test.html 
