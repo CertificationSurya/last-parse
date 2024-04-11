@@ -36,5 +36,8 @@
 	},
 	"files": [
 		"/dist/*"
-	]
+	],
+	"bin": {
+		"last-parse": "./dist/index.js"
+	}
 }

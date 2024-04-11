@@ -13,7 +13,7 @@
         "noImplicitAny": true,
         "strictNullChecks": true,
         "isolatedModules": true,
-        "noEmit": true
+        "noEmit": true,
     },
     "include": ["src"], // compile our ts code present in /src
     "exclude": ["node_modules", "**/tests/*"], // usual convention to test the lib is present in **/

@@ -7,5 +7,7 @@ export default defineConfig({
     shims: true,
     skipNodeModulesBundle: true,
     clean: true,
-    
+    banner: {
+        js: "#!/usr/bin/env node"
+    }
 })

@@ -1,4 +1,4 @@
-// #!/usr/bin/env ts-node
+// #!/usr/bin/env node
 import {DetailsHolder} from "./detailsHolder/holdDetails";
 import {resolvePath} from "./pathHandler/handlePath";
 import {
@@ -19,10 +19,12 @@ import {updateFile} from "./fileUpdater/updateFile";
 import {Beautify, Gap, Properties} from "cli-beautifier";
 
 if (process.argv.length > 3) {
+	console.log("Incorrect Command.\nCommand Available: ");
+	console.log('last-parse [filePath_to_last.config.json (default=/)]')
 	process.exit();
 }
-const path = resolvePath(process.argv[2]);
-let details: DetailsHolder; // TODO-other implementation
+const path = resolvePath(process.argv[2]|| '/');
+let details: DetailsHolder; 
 
 // Helpers
 // strip Dot in path

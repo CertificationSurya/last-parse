@@ -11,6 +11,15 @@ export type correctorRetType = {
 	text: string;
 };
 
+type matches = {
+    replacements: { offset: number, length: number, value: string }[];
+    offset: number;
+    length: number;
+}
+interface LanguageToolSuggestion {
+	matches: matches[]
+}
+
 // Implementations
 const query = function (args: params) {
 	return (
@@ -36,10 +45,11 @@ async function corrector(params: params) {
 
 	try {
 		const res = await fetch(url, options);
-		const data = await res.json(); 
+		const data: LanguageToolSuggestion = await res.json(); 
 		return data;
 	} catch (error) {
 		console.error("Error:", error);
+		return {} as LanguageToolSuggestion;
 	}
 }
 
@@ -60,7 +70,6 @@ export const handleCorrection = async (
         }
         shiftAfterUpdate = text.length - errorText.length;
 	}
-
 	return {text};
 };
 
