@@ -1,18 +1,21 @@
 # Last-Parse
-Last-parse is a versatile package designed to view, suggest corrections, and perform corrections on text content within HTML, EJS, and TXT files. Whether you're dealing with grammatical errors, spelling mistakes, or other textual issues, last-parser provides a seamless solution for enhancing your text content.
+Last-parse is a versatile package designed to view, suggest corrections, and perform corrections on text content within HTML, EJS, and TXT files. Whether you're dealing with grammatical errors, spelling mistakes, or other textual issues, last-parse provides a seamless solution for enhancing your text content.
+
+# 🔥Disclaimer🔥:
+### This package will update your file and there is no going back. Thus, snapshot(git) of all file contents is advised 
 
 ## Installation
-```bash
+```node
 npm i last-parse
 ```
 ---
 ## Usage
 - Create a config.last.json file anywhere, preferred root of your project, and modify following properties as you like. Properties not given are taken from default setting.
-- Change package.json. Add script for parser with appropriate destination
+- Change package.json. Add script for parse with appropriate destination
 - Execute using npm run parse
 
 ### config.last.json (default)
-```bash
+```node
 // config.last.json
 {
     files: [""],
@@ -29,7 +32,7 @@ npm i last-parse
 - #### languageConfig: String value representing language to parse. [Available-Language](https://api.languagetoolplus.com/v2/languages) [requires longCode]
 
 ## Changes to package.json
-```bash
+```node
 // package.json
     "scripts" : {
            "parse" : "last-parse pathToYourConfig.last.json"
@@ -37,20 +40,25 @@ npm i last-parse
 
      // E.g:
      "scripts" : {
-           "parse" : "last-parse /"
+           "parse" : "last-parse ./"
      }
 ``` 
 
 
-## To Execute:
-```bash
+## To Execute: (locally)
+```node
 npm run parse
+```
+## To Execute: (globally)
+```node
+npm i -g last-parse
+last-parse [filePath]
 ```
 ---
 
 
 ## Features
-- Use the package manager [npm](https://www.npmjs.com/) to install last-parser.
+- Use the package manager [npm](https://www.npmjs.com/) to install last-parse.
 - Supports parsing and correction of text content within HTML, EJS, and TXT files.
 - Identifies grammatical errors, spelling mistakes, and other textual issues.
 - Provides suggestions for correcting identified errors.

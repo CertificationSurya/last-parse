@@ -20,11 +20,11 @@ import {Beautify, Gap, Properties} from "cli-beautifier";
 
 if (process.argv.length > 3) {
 	console.log("Incorrect Command.\nCommand Available: ");
-	console.log('last-parse [filePath_to_last.config.json (default=/)]')
+	console.log("last-parse [filePath_to_last.config.js (default=./)]");
 	process.exit();
 }
-const path = resolvePath(process.argv[2]|| '/');
-let details: DetailsHolder; 
+const user_path = resolvePath(process.argv[2] || "./");
+let details: DetailsHolder;
 
 // Helpers
 // strip Dot in path
@@ -34,6 +34,15 @@ const stripDotInPath = (path: string) => {
 	}
 	return path;
 };
+const loadJson = async(path: string): Promise<configType> => {
+	try{
+		return require(path);
+	}
+	catch(err){
+		return {} as configType;
+	}
+}
+
 const paintFileName = (filePath: string): string => {
 	return (
 		Beautify.pass("\nGoing Through: ", false, 1) +
@@ -45,8 +54,8 @@ const paintFileName = (filePath: string): string => {
 (async () => {
 	// getting file successfully
 	try {
-		const completePath = process.cwd() + stripDotInPath(path);
-		const userConfig: configType = await import(completePath);
+		const completePath = process.cwd() + stripDotInPath(user_path);
+		const userConfig: configType = await loadJson(completePath) ;
 		// including others default config files if not given
 		const config: configType = {
 			...defaultConfigs,
@@ -57,7 +66,7 @@ const paintFileName = (filePath: string): string => {
 		);
 
 		// details holder to handle future parsing and whatnot
-		details = new DetailsHolder(path, config);
+		details = new DetailsHolder(user_path, config);
 
 		let validFiles: string[] = [];
 		let invalidFiles: fileInvalidityObjType[] = [];

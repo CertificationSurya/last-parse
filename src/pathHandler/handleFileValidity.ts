@@ -5,7 +5,7 @@ import {
 } from "../errorHandler/errorTypes";
 import {recurseToFileMain} from "./globImplementation";
 
-const supportedFiles = [".html", ".jsx", ".tsx", "*.ejs", ".txt"];
+const supportedFiles = [".html", "*.ejs", ".txt"];
 // const userPath = "./src/index.ts";
 
 export const isDirectory = (path: string): boolean => {
