@@ -132,9 +132,7 @@ export async function updateFile(fileName: string, userConfig: configType) {
 	for (const sentence of chunkSentence) {
 		let replacer: correctorRetType = {text: sentence.content};
 		let prevReplacer: string = sentence.content;
-
-		console.log(sentence)
-
+		
 		do {
 			prevReplacer = replacer.text;
 			// Checking of each sentence and words and provide feedback accordingly
