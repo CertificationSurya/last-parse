@@ -38,7 +38,8 @@
 		"cli-beautifier": "^1.0.4"
 	},
 	"files": [
-		"/dist/*"
+		"/dist/*",
+		"config.last.js"
 	],
 	"bin": {
 		"last-parse": "./dist/index.js"

@@ -18,10 +18,10 @@ npm i last-parse
 ```node
 // config.last.json
 {
-    files: [""],
-	ignoreFolders: ["node_modules", ".git", "lib", "test"],
-	autoReplace: false,
-	languageConfig: "en-US",
+    "files": [""],
+	"ignoreFolders": ["node_modules", ".git", "lib", "test"],
+	"autoReplace": false,
+	"languageConfig": "en-US"
 }
 ```
 
