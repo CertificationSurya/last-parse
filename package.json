@@ -1,6 +1,6 @@
 {
 	"name": "last-parse",
-	"version": "1.0.0",
+	"version": "0.0.2",
 	"description": "A npm package for handeling your linguistic error and suggest/performs correction. Currently Supporting HTML, EJS, txt files",
 	"main": "./dist/index.js",
 	"repository": {
@@ -38,8 +38,7 @@
 		"cli-beautifier": "^1.0.4"
 	},
 	"files": [
-		"/dist/*",
-		"config.last.js"
+		"/dist/*"
 	],
 	"bin": {
 		"last-parse": "./dist/index.js"
