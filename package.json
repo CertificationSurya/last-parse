@@ -1,7 +1,7 @@
 {
 	"name": "last-parse",
 	"version": "0.0.2",
-	"description": "A npm package for handeling your linguistic error and suggest/performs correction. Currently Supporting HTML, EJS, txt files",
+	"description": "A npm package for handeling your linguistic error and suggest/performs correction. Currently Supporting HTML, EJS, MD and txt files",
 	"main": "./dist/index.js",
 	"repository": {
 		"type": "git",

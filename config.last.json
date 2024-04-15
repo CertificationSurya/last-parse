@@ -1,7 +1,6 @@
 {
     "type": "json",
-    "files": ["/pathTest/*.html", "/da", "/**/*.html", "/pathTest/*.ejs", "/pathTest/*.jsx"],
+    "files": [ "/pathTest/*.txt", "/pathTest/*.md", "/pathTest/*.html", "/da", "/**/*.html", "/pathTest/*.ejs", "/pathTest/*.jsx"],
     "ignoreFolders": ["./node_modules", "/pathTest/test.ejs"],
-    "autoReplace": true,
-    "showUpdate": true
+    "autoReplace": true
 }

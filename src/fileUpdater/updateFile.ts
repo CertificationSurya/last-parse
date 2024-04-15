@@ -8,10 +8,15 @@ import {SentencePainter} from "../errorHandler/errorHandler";
 const comments = [
 	{ext: ".html", cmtSt: "<!--", cmtEnd: "-->"},
 	{ext: ".ejs", cmtSt: "<!--", cmtEnd: "-->"},
-	// {ext: ".jsx", cmtSt: "{/*", cmtEnd: "*/}"},
-	// {ext: ".tsx", cmtSt: "{/*", cmtEnd: "*/}"},
+	{ext: ".md", cmtSt: "```", cmtEnd: "```"}
 ];
 
+const isMarkUpLanguage = [".ejs", ".html"];
+
+// helpers
+const checkMarkUpLanguage = (fileName: string) => {
+	return isMarkUpLanguage.some((fileFormat) => fileName.endsWith(fileFormat));
+};
 const testComment = (line: string[], stOrEnd: string, currPos: number) => {
 	let chunk = "";
 	for (let i = 0; i < stOrEnd.length; i++) {
@@ -23,14 +28,20 @@ const testComment = (line: string[], stOrEnd: string, currPos: number) => {
 export async function updateFile(fileName: string, userConfig: configType) {
 	const chunkSentence: SentenceDetails[] = [];
 	const fileContent: string[] = [];
-	let prevAngleBracket: '<'| null = null;
+	let prevAngleBracket: "<" | null = null;
+	// forNonMarkUps
+	const isNotMarkUpFormat = !checkMarkUpLanguage(fileName);
+	const hasSkippable = comments.some(cmt=> fileName.endsWith(cmt.ext));
 
-	const fileCmt = comments.find((cmtDet) => fileName.endsWith(cmtDet.ext)) || { cmtSt: '', cmtEnd: ''};
+	const fileCmt = comments.find((cmtDet) => fileName.endsWith(cmtDet.ext)) || {
+		cmtSt: "",
+		cmtEnd: "",
+	};
 	const {cmtSt, cmtEnd} = fileCmt;
 
 	const fileDatas = fs.readFileSync(fileName).toString().split("\n");
 
-	let inBrackets= true;
+	let inBrackets = true;
 	let skip = false;
 	let storeStartPos = true;
 	let contentStPos = -1;
@@ -38,18 +49,37 @@ export async function updateFile(fileName: string, userConfig: configType) {
 	let lineNum = 0;
 
 	for await (const line of fileDatas) {
-		let textContent = "";
 		lineNum++;
-		const currLine = line.split("");
 		fileContent.push(line);
-
-		for (let currPos = 0; currPos < currLine.length; currPos++) {
-			const char = currLine[currPos];
+		
+		if (isNotMarkUpFormat && !hasSkippable){
+			chunkSentence.push(
+				new SentenceDetails(
+					line.replace('\r',""), 0, line.length, lineNum)
+			)
+		}
+		else if (isNotMarkUpFormat && hasSkippable ) {
+			const currLine:string[] = line.split("");
+			const currPos: number = line.match(/^\s+/)?.[0].length || 0;
+			skip = skip
+				? !testComment(currLine, cmtEnd, currPos)
+				: testComment(currLine, cmtSt, currPos);
+			if (skip) continue;
+			chunkSentence.push(
+				new SentenceDetails( line.replace("\r", ""),	0, line.length,	lineNum	)
+			);
+		}
+		else {
+			// for MarkUpLanguages.
+			let textContent = "";
+			const currLine = line.split("");
+			for (let currPos = 0; currPos < currLine.length; currPos++) {
+				const char = currLine[currPos];
 
 			// comment checker
-			skip = !skip
-				? testComment(currLine, cmtSt, currPos)
-				: !testComment(currLine, cmtEnd, currPos);
+			skip = skip
+				? !testComment(currLine, cmtEnd, currPos)
+				: testComment(currLine, cmtSt, currPos);
 			if (skip) continue;
 
 			// brackets checker
@@ -69,30 +99,30 @@ export async function updateFile(fileName: string, userConfig: configType) {
 					);
 					textContent = "";
 				}
-			} else if (char === ">") {
-				if (prevAngleBracket!=='<') continue;
-				prevAngleBracket = null;
-				inBrackets = false;
-				storeStartPos = true;
-				continue;
-			}
-
-			if (!inBrackets) {
-				if (storeStartPos) {
-					if (/\s/.test(char)) continue;
-					contentStPos = currPos;
-					storeStartPos = false;
+				} else if (char === ">") {
+					if (prevAngleBracket !== "<") continue;
+					prevAngleBracket = null;
+					inBrackets = false;
+					storeStartPos = true;
+					continue;
 				}
-				if (textContent != "") {
-					textContent += char;
-				} else textContent += /\s/.test(char) ? "" : char;
-			}
 
-			// if end of line and contains text, remove
-			if (!currLine[currPos + 1] && textContent) {
-				chunkSentence.push(
-					new SentenceDetails(textContent.replace("\r",''), contentStPos, currPos, lineNum)
-				);
+				if (!inBrackets) {
+					if (storeStartPos && !(/\s/.test(char))) { //   many spaces before
+						contentStPos = currPos;
+						storeStartPos = false;
+					}
+					if (textContent != "") {
+						textContent += char;
+					} else textContent += /\s/.test(char) ? "" : char;
+				}
+
+				// if end of line and contains text, remove
+				if (!currLine[currPos + 1] && textContent) {
+					chunkSentence.push(
+						new SentenceDetails( textContent.replace("\r", ""),	contentStPos, currPos, lineNum )
+					);
+				}
 			}
 		}
 	}
@@ -102,6 +132,8 @@ export async function updateFile(fileName: string, userConfig: configType) {
 	for (const sentence of chunkSentence) {
 		let replacer: correctorRetType = {text: sentence.content};
 		let prevReplacer: string = sentence.content;
+
+		console.log(sentence)
 
 		do {
 			prevReplacer = replacer.text;

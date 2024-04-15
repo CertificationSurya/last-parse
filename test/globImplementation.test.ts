@@ -19,9 +19,9 @@ describe("Test user given file name", () => {
 			// add root Path to the input and expected files
 			prependCwd(
 				["/**/*.html"],
-				["/pathTest/layer-1.html", "/pathTest/layer-1A.html", "/test.html"]
+				["/pathTest/layer-1.html", "/pathTest/layer-1A.html", "/pathTest/test.html"]
 			),
-			prependCwd(["/*.html"], ["/test.html"]),
+			prependCwd(["/*.html"], []),
 			prependCwd(["/**/invalidFolder/*.html"], []),
 			prependCwd(
 				["/**/layer2/**/*.html"],
@@ -35,7 +35,7 @@ describe("Test user given file name", () => {
 		])(
 			"should return matching HTML files for path: %s",
 			(inputPaths, expectedFiles) => {
-				expect(recurseToFileMain(inputPaths, ignoreFolders)).toEqual(
+				expect(recurseToFileMain(inputPaths)).toEqual(
 					expectedFiles
 				);
 			}

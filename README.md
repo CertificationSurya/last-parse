@@ -1,5 +1,5 @@
 # Last-Parse
-Last-parse is a versatile package designed to view, suggest corrections, and perform corrections on text content within HTML, EJS, and TXT files. Whether you're dealing with grammatical errors, spelling mistakes, or other textual issues, last-parse provides a seamless solution for enhancing your text content.
+Last-parse is a versatile package designed to view, suggest corrections, and perform corrections on text content within HTML, EJS, MD and TXT files. Whether you're dealing with grammatical errors, spelling mistakes, or other textual issues, last-parse provides a seamless solution for enhancing your text content.
 
 # 🔥Disclaimer🔥:
 ### This package will update your file and there is no going back. Thus, snapshot(git) of all file contents is advised 
@@ -59,7 +59,7 @@ last-parse [filePath]
 
 ## Features
 - Use the package manager [npm](https://www.npmjs.com/) to install last-parse.
-- Supports parsing and correction of text content within HTML, EJS, and TXT files.
+- Supports parsing and correction of text content within HTML, EJS, MD and TXT files.
 - Identifies grammatical errors, spelling mistakes, and other textual issues.
 - Provides suggestions for correcting identified errors.
 - Allows for easy integration into your existing projects.
